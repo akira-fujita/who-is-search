@@ -284,7 +284,8 @@ def extract_contact_emails_from_2layer(url, log_filename="debug_log.txt", debug_
         }
     """
     debug_print(f"[DEBUG] wait_seconds is set to {wait_seconds}", log_filename, debug_mode, use_streamlit)
-
+    processed_count = 0
+    
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
     }
@@ -305,7 +306,6 @@ def extract_contact_emails_from_2layer(url, log_filename="debug_log.txt", debug_
     domain_links = []
     emails = []
     names = []
-    processed_count = 0
     emails_found_count = 0
 
     for pre_tag in pre_tags:
