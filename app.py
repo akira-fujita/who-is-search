@@ -318,7 +318,7 @@ def extract_contact_emails_from_2layer(url, log_filename="debug_log.txt", debug_
                 full_url = urljoin(url, a_tag['href'].replace("&amp;", "&"))
                 domain_links.append(full_url)
                 processed_count += 1
-                if processed_count > 0 and processed_count % 30 == 0:
+                if processed_count > 0 and processed_count % 25 == 0:
                     debug_print(f"[INFO] Waiting for {wait_seconds} seconds after processing {processed_count} links...", log_filename, debug_mode, use_streamlit)
                     time.sleep(int(wait_seconds))
                 try:
@@ -559,7 +559,7 @@ def run_streamlit_ui():
             search_type = search_type_options[selected_label]
             search_keyword = st.text_input("検索ワード")
             uploaded_file = st.file_uploader("CSVファイルをアップロード（オプション）", type=["csv"])
-            wait_seconds = st.slider("35件あたりの待ち時間（秒）", min_value=0, max_value=300, value=60, step=5)
+            wait_seconds = st.slider("25件あたりの待ち時間（秒）", min_value=0, max_value=300, value=60, step=5)
             execute_button = st.form_submit_button("実行")
             
             if execute_button:
@@ -595,7 +595,7 @@ def run_streamlit_ui():
                         output_area.json(result)
                         generate_csv_download_button(result, download_btn_placeholder, search_type, search_keyword)
                     else:
-                        output_area.write(f"35件あたり　{wait_seconds}秒 の待ち時間が発生します。しばらくお待ちください")
+                        output_area.write(f"25件あたり　{wait_seconds}秒 の待ち時間が発生します。しばらくお待ちください")
                         result = extract_contact_emails_from_2layer(target_url, debug_mode=True, use_streamlit=True, wait_seconds=wait_seconds)
                         output_area.json(result)
                         generate_csv_download_button(result, download_btn_placeholder, search_type, search_keyword)
