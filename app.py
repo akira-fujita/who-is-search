@@ -426,11 +426,15 @@ def process_uploaded_csv_file(uploaded_file, wait_seconds, output_area, download
             result["search_type"] = search_type
             result["search_keyword"] = search_keyword
             all_results.append(result)
+            if wait_seconds > 0:
+                time.sleep(wait_seconds)
         else:
             result = extract_contact_emails_from_2layer(target_url, debug_mode=True, use_streamlit=True, wait_seconds=wait_seconds)
             result["search_type"] = search_type
             result["search_keyword"] = search_keyword
             all_results.append(result)
+            if wait_seconds > 0:
+                time.sleep(wait_seconds)
         output_area.write("取得結果:")
         # output_area.json(result)
 
