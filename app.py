@@ -318,8 +318,8 @@ def extract_contact_emails_from_2layer(url, log_filename="debug_log.txt", debug_
                 full_url = urljoin(url, a_tag['href'].replace("&amp;", "&"))
                 domain_links.append(full_url)
                 processed_count += 1
-                if processed_count > 0 and processed_count % 25 == 0:
-                    debug_print(f"[INFO] Waiting for {wait_seconds} seconds after processing {processed_count} links...", log_filename, debug_mode, use_streamlit)
+                if (processed_count + cumulative_processed_count) > 0 and (processed_count + cumulative_processed_count) % 25 == 0:
+                    debug_print(f"[INFO] Waiting for {wait_seconds} seconds after processing {processed_count + cumulative_processed_count} total links...", log_filename, debug_mode, use_streamlit)
                     time.sleep(int(wait_seconds))
                 try:
                     res = requests.get(full_url, headers=headers, timeout=10)
@@ -430,7 +430,9 @@ def process_uploaded_csv_file(uploaded_file, wait_seconds, output_area, download
             result = extract_contact_emails_from_2layer(target_url, debug_mode=True, use_streamlit=True, wait_seconds=wait_seconds)
             result["search_type"] = search_type
             result["search_keyword"] = search_keyword
-            all_results.append(result)
+        all_results.append(result)
+        if (index + 1) % 25 == 0:
+            output_area.write(f"[INFO] {index + 1}件処理済み")
         output_area.write("取得結果:")
         # output_area.json(result)
 
@@ -585,6 +587,7 @@ def run_streamlit_ui():
                     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
                     filename = f"combined_{timestamp}.csv"
                     download_btn_placeholder.download_button("全結果CSVをダウンロード", combined_csv_data, file_name=filename, mime="text/csv")
+                    output_area.text_area("CSV出力プレビュー", combined_csv_data, height=300)
                 elif search_keyword:
                     target_url = f"https://whois.jprs.jp/?key={quote(search_keyword)}&type={search_type}"
                     output_area.write(f"ターゲットURL: {target_url}")
