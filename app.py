@@ -462,7 +462,7 @@ def process_uploaded_csv_file(uploaded_file, wait_seconds, output_area, download
     # CSV出力
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     filename = f"{timestamp}.csv"
-    csv_data = csv_buffer.getvalue()
+    csv_data = csv_buffer.getvalue().encode("shift_jis")
     download_btn_placeholder.download_button("CSVをダウンロード", csv_data, file_name=filename, mime="text/csv")
     output_area.text_area("CSV出力プレビュー", csv_data, height=300)
     return all_results
