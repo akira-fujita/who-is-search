@@ -462,7 +462,7 @@ def process_uploaded_csv_file(uploaded_file, wait_seconds, output_area, download
     # CSV出力
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     filename = f"{timestamp}.csv"
-    csv_data = csv_buffer.getvalue().encode("shift_jis")
+    csv_data = csv_buffer.getvalue().encode("shift_jis", errors="replace")
     download_btn_placeholder.download_button("CSVをダウンロード", csv_data, file_name=filename, mime="text/csv")
     output_area.text_area("CSV出力プレビュー", csv_data, height=300)
     return all_results
@@ -544,7 +544,7 @@ def run_streamlit_ui():
             for url, name, email in zip(result.get("domain_links", []), result.get("names", []), result.get("emails", [])):
                 writer.writerow([url, name, email])
         
-        csv_data = csv_buffer.getvalue()
+        csv_data = csv_buffer.getvalue().encode("shift_jis", errors="replace")
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         filename = f"{timestamp}.csv"
         placeholder.download_button("CSVをダウンロード", csv_data, file_name=filename, mime="text/csv")
@@ -587,7 +587,7 @@ def run_streamlit_ui():
                             for url, name, email in zip(result.get("domain_links", []), result.get("names", []), result.get("emails", [])):
                                 writer.writerow([url, name, email])
                         writer.writerow([])
-                    combined_csv_data = combined_csv_buffer.getvalue()
+                    combined_csv_data = combined_csv_buffer.getvalue().encode("shift_jis", errors="replace")
                     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
                     filename = f"combined_{timestamp}.csv"
                     download_btn_placeholder.download_button("全結果CSVをダウンロード", combined_csv_data, file_name=filename, mime="text/csv")
