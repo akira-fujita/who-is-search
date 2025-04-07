@@ -389,8 +389,8 @@ def save_results_to_csv(results, filename=None):
 
 def process_uploaded_csv_file(uploaded_file, wait_seconds, output_area, download_btn_placeholder):
     import pandas as pd
-    csv_data = uploaded_file.read().decode("utf-8")
-    df = pd.read_csv(StringIO(csv_data), header=None, names=["検索タイプ", "検索ワード"])
+    csv_data = uploaded_file.read().decode("utf-8-sig")
+    df = pd.read_csv(StringIO(csv_data), encoding="utf-8-sig", header=None, names=["検索タイプ", "検索ワード"])
     search_type_options = {
         "ドメイン名情報": "DOM",
         "ドメイン名情報(登録者)": "DOM-HOLDER",
@@ -427,6 +427,7 @@ def process_uploaded_csv_file(uploaded_file, wait_seconds, output_area, download
             result["search_keyword"] = search_keyword
             all_results.append(result)
             if wait_seconds > 0:
+                output_area.write(f"{wait_seconds}秒待機中...")
                 time.sleep(wait_seconds)
         else:
             result = extract_contact_emails_from_2layer(target_url, debug_mode=True, use_streamlit=True, wait_seconds=wait_seconds)
@@ -434,6 +435,7 @@ def process_uploaded_csv_file(uploaded_file, wait_seconds, output_area, download
             result["search_keyword"] = search_keyword
             all_results.append(result)
             if wait_seconds > 0:
+                output_area.write(f"{wait_seconds}秒待機中...")
                 time.sleep(wait_seconds)
         output_area.write("取得結果:")
         # output_area.json(result)
