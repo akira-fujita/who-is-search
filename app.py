@@ -1,5 +1,6 @@
 import os
 import sys
+from pandas.core.dtypes.common import is_1d_only_ea_dtype
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 UTILS_PATH = os.path.join(CURRENT_DIR, "../../utils")
@@ -321,6 +322,25 @@ def extract_contact_emails_from_2layer(url, log_filename="debug_log.txt", debug_
                 if processed_count > 0 and processed_count % 25 == 0:
                     debug_print(f"[INFO] Waiting for {wait_seconds} seconds after processing {processed_count} links...", log_filename, debug_mode, use_streamlit)
                     time.sleep(int(wait_seconds))
+                is_1layer = check_whois_registration_info(full_url)
+                debug_print(f"This URL is checked as 1 layer: {full_url}", log_filename, debug_mode, use_streamlit)
+                if is_1layer:
+                    inner_result = extract_contact_emails_from_1layer(full_url, log_filename, debug_mode, use_streamlit)
+                    debug_print(f"[DEBUG - extract_contact_emails_from_2layer] Extracted from 1 layer: {inner_result}", log_filename, debug_mode, use_streamlit)
+                    for role in [("registrant", "登録担当者"), ("tech", "技術連絡担当者")]:
+                        debug_print(f"[DEBUG - extract_contact_emails_from_2layer] Processing role: {role[0]}", log_filename, debug_mode, use_streamlit)
+                        url_key = f"{role[0]}_contact_url"
+                        name_key = f"{role[0]}_name"
+                        email_key = f"{role[0]}_email"
+                        
+                        domain_links.append(inner_result.get(url_key, "[No URL]"))
+                        names.append(inner_result.get(name_key, "[No Name Found]"))
+                        email_val = inner_result.get(email_key, "[No Email Found]")
+                        emails.append(email_val)
+                        
+                        if email_val and not email_val.startswith("[No Email Found]"):
+                            emails_found_count += 1
+                    continue
                 try:
                     res = requests.get(full_url, headers=headers, timeout=10)
                     res.raise_for_status()
